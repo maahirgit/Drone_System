@@ -1,0 +1,74 @@
+import React, { useState } from "react";
+import { Box, Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
+
+const steps = ["Step 1: Add Details", "Step 2: Confirm", "Step 3: Submit"];
+
+const LoginPage = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
+  const handleNext = () => {
+    if (activeStep < steps.length - 1) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (activeStep > 0) {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
+  return (
+    <Box sx={{ width: "100%", padding: "20px" }}>
+      <Typography variant="h4" align="center" mb={2}>
+        Login Page Stepper
+      </Typography>
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((label, index) => (
+          <Step key={index}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <Box sx={{ mt: 4, textAlign: "center" }}>
+        {activeStep === steps.length ? (
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              All steps completed!
+            </Typography>
+            <Button variant="contained" onClick={handleReset}>
+              Reset
+            </Button>
+          </Box>
+        ) : (
+          <Box>
+            <Typography variant="body1" mb={2}>
+              {steps[activeStep]}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              sx={{ mr: 2 }}
+              disabled={activeStep === steps.length - 1}
+            >
+              Next
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleBack}
+              disabled={activeStep === 0}
+            >
+              Back
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+export default LoginPage;
