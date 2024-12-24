@@ -2,7 +2,8 @@ import React from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { AdminSidebar } from "../layouts/AdminSidebar"
 import LoginPage from "../common/auth/Login"
-
+import AddDrone from "../common/auth/AddDrone"
+import DroneDetails from "../common/auth/DroneDetails"
 const MainRouter = ({children}) => {
     const routesData = createBrowserRouter([
         {
@@ -14,8 +15,10 @@ const MainRouter = ({children}) => {
         },
         {
             path:"/admin",
-            element:<AdminSidebar/>,
-            element:<LoginPage/>,
+            /* element:<AdminSidebar/>,
+            element:<LoginPage/>, */
+            /* element:<AddDrone/>, */
+            element : <DroneDetails/>,
             errorElement:<h1>ERROR...</h1>,
             children : [
                 {
