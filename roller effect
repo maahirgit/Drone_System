@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import myImage from '../../../assets/auth/drones.jpg'; // Ensure the correct path to your image file
+
+const LoginPage = () => {
+  const [isDroneVisible, setIsDroneVisible] = useState(true);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
+  useEffect(() => {
+    // Show the drone for a set time, then hide it and display the form
+    const timer = setTimeout(() => {
+      setIsDroneVisible(false);
+      setTimeout(() => {
+        setIsFormVisible(true);
+      }, 500); // Delay before showing the form
+    }, 3000); // Duration for drone stand animation
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <Box
+      sx={{
+        position: 'relative',
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `url(${myImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      {/* Drone animation or stand */}
+      {isDroneVisible && (
+        <Box
+          sx={{
+            width: '150px',
+            height: '150px',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: '20px',
+            animation: 'droneMove 3s ease-in-out',
+            '@keyframes droneMove': {
+              '0%': { transform: 'translateY(-50px)' },
+              '50%': { transform: 'translateY(0)' },
+              '100%': { transform: 'translateY(-50px)' },
+            },
+          }}
+        >
+          🚁
+        </Box>
+      )}
+
+      {/* Login Form */}
+      {isFormVisible && (
+        <Box
+          sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
+            width: { xs: '90%', md: '400px' },
+            transform: isFormVisible ? 'translateY(0)' : 'translateY(50px)',
+            transition: 'transform 0.5s ease-in-out',
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{ marginBottom: 2, fontWeight: 'bold', color: '#222', textAlign: 'center' }}
+          >
+            Sign In
+          </Typography>
+          <TextField
+            fullWidth
+            label="Username"
+            variant="filled"
+            InputProps={{
+              style: {
+                background: 'rgba(255, 255, 255, 0.5)',
+                color: '#333',
+                borderRadius: '8px',
+              },
+            }}
+            InputLabelProps={{
+              style: { color: '#333' },
+            }}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            variant="filled"
+            InputProps={{
+              style: {
+                background: 'rgba(255, 255, 255, 0.5)',
+                color: '#333',
+                borderRadius: '8px',
+              },
+            }}
+            InputLabelProps={{
+              style: { color: '#333' },
+            }}
+            sx={{ marginBottom: 2 }}
+          />
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{
+              marginBottom: 2,
+              background: '#4CAF50',
+              color: '#fff',
+              padding: '10px 0',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: '8px',
+              transition: 'background 0.3s ease',
+              '&:hover': {
+                background: '#45a049',
+              },
+            }}
+          >
+            Sign In
+          </Button>
+          <FormControlLabel
+            control={<Checkbox sx={{ color: '#333' }} />}
+            label="Remember Me"
+            sx={{ marginBottom: 1, color: '#444' }}
+          />
+          <Typography
+            variant="body2"
+            sx={{ marginBottom: 1, color: '#444', textDecoration: 'underline', cursor: 'pointer' }}
+          >
+            Forgot Password?
+          </Typography>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default LoginPage;
+
+
+
+roller effect of drone
