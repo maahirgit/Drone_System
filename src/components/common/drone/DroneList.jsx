@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Card, CardMedia, CardContent, Typography, Button, Container } from "@mui/material";
-import drone1 from "../../assets/drone/drone1.jpg";
-import drone2 from "../../assets/drone/mavic-2.jpg";
+import drone1 from "../../../assets/drone/drone1.jpg";
+import drone2 from "../../../assets/drone/mavic-2.jpg";
 
 const drones = [
   { id: 1, name: "DJI Mavic 3", price: "$5,498.00", image: drone1 },
