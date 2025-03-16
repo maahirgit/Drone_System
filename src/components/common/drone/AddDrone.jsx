@@ -1,131 +1,200 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Input,
-  IconButton,
-  TextField,
-  Button,
+import { 
+  Box, Typography, TextField, Button, MenuItem, IconButton, Card, CardContent, 
+  CardMedia, Grid, Paper 
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import axios from "axios";
 
 const ImageUploader = () => {
-  const [image, setImage] = useState(null);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [images, setImages] = useState([]);
+  const [droneName, setDroneName] = useState("");
+  const [droneBrand, setDroneBrand] = useState("");
+  const [droneDesc, setDroneDesc] = useState("");
+  const [pricePerDay, setPricePerDay] = useState("");
+  const [availability, setAvailability] = useState("");
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setImages([file]); // Store file in state
     }
   };
 
-  const handleSubmit = () => {
-    const formData = {
-      name,
-      price,
-      startDate,
-      endDate,
-    };
-    console.log("Form Data:", formData);
+  const handleSubmit = async () => {
+    if (!droneName || !droneBrand || !droneDesc || !pricePerDay || !availability) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    if (images.length === 0) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    const formData = new FormData();
+    const isAvailable = availability === "Available" ? true : false;
+
+    formData.append("Drone_name", droneName);
+    formData.append("Drone_brand", droneBrand);
+    formData.append("Drone_description", droneDesc);
+    formData.append("Price_per_hour", "0"); // Fix: Include this field
+    formData.append("Price_per_day", pricePerDay);
+    formData.append("Availability", isAvailable);
+    formData.append("Images", images[0]);
+
+    try {
+      const response = await axios.post("/drone/addDroneDetails", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status !== 201) {
+        throw new Error("Failed to upload drone details");
+      }
+
+      console.log("Drone added successfully:", response.data);
+
+      // Reset form fields
+      setDroneName("");
+      setDroneBrand("");
+      setDroneDesc("");
+      setPricePerDay("");
+      setAvailability("");
+      setImages([]);
+
+      alert("Drone added successfully!");
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      alert("Error adding drone: " + (error.response?.data?.message || error.message));
+    }
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="flex-start"
-      alignItems="center"
-      height="100vh"
-      sx={{ marginLeft: "50px" }}
-    >
-      <Typography variant="h4" sx={{ marginBottom: "20px",marginLeft:"200px",marginTop:"50px" }}>
-        Enter Drone Details
-      </Typography>
-      <Box display="flex" alignItems="center">
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          width={250}
-          height={250}
-        >
-          <label htmlFor="image-upload">
-            <Input
-              id="image-upload"
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleImageUpload}
-            />
-            {image ? (
-              <Box
-                component="img"
-                src={image}
-                alt="Uploaded"
-                sx={{
-                  width: "180%",
-                  height: "150%",
-                  objectFit: "cover",
-                  borderRadius: 4,
-                }}
-              />
-            ) : (
-              <IconButton
-                component="span"
-                sx={{ fontSize: 100, color: "#757575" }}
-              >
-                <AddIcon sx={{ fontSize: 100 }} />
-              </IconButton>
-            )}
-          </label>
-        </Box>
+    <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Card sx={{ width: 500, padding: 3, borderRadius: 3, boxShadow: 5 }}>
+        <CardContent>
+          <Typography variant="h5" fontWeight="bold" textAlign="center" mb={2}>
+            Upload Drone Details
+          </Typography>
 
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap={5}
-          sx={{ marginLeft: "250px" }}
-        >
-          <TextField
-            label="Name"
-            variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <TextField
-            label="Price"
-            variant="outlined"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-          <TextField
-            label="Start Date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <TextField
-            label="End Date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            sx={{ width: "600px" }}
-          />
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
+          <Paper 
+            variant="outlined" 
+            sx={{ 
+              p: 2, 
+              textAlign: "center", 
+              bgcolor: "#f7f7f7", 
+              borderRadius: 2, 
+              mb: 2 
+            }}
+          >
+            <input 
+              type="file" 
+              accept="image/*" 
+              id="upload-button" 
+              style={{ display: "none" }} 
+              onChange={handleImageUpload} 
+            />
+            <label htmlFor="upload-button">
+              <Button 
+                variant="contained" 
+                component="span" 
+                startIcon={<CloudUploadIcon />} 
+                sx={{ textTransform: "none" }}
+              >
+                Upload Image
+              </Button>
+            </label>
+          </Paper>
+
+          {images.length > 0 && (
+            <Box display="flex" justifyContent="center" mb={2}>
+              <CardMedia 
+                component="img" 
+                image={URL.createObjectURL(images[0])} 
+                alt="Drone" 
+                sx={{ width: 150, height: 150, borderRadius: 2 }} 
+              />
+              <IconButton 
+                onClick={() => setImages([])} 
+                sx={{ bgcolor: "red", color: "white", ml: 1, "&:hover": { bgcolor: "#d32f2f" } }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          )}
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField 
+                fullWidth 
+                label="Drone Name" 
+                value={droneName} 
+                onChange={(e) => setDroneName(e.target.value)} 
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField 
+                fullWidth 
+                label="Drone Brand" 
+                value={droneBrand} 
+                onChange={(e) => setDroneBrand(e.target.value)} 
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField 
+                fullWidth 
+                label="Drone Description" 
+                multiline 
+                rows={3} 
+                value={droneDesc} 
+                onChange={(e) => setDroneDesc(e.target.value)} 
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField 
+                fullWidth 
+                label="Price per Day" 
+                type="number" 
+                value={pricePerDay} 
+                onChange={(e) => setPricePerDay(e.target.value)} 
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField 
+                fullWidth 
+                select 
+                label="Availability" 
+                value={availability} 
+                onChange={(e) => setAvailability(e.target.value)}
+              >
+                <MenuItem value="Available">Available</MenuItem>
+                <MenuItem value="Not Available">Not Available</MenuItem>
+              </TextField>
+            </Grid>
+          </Grid>
+
+          <Button 
+            fullWidth 
+            variant="contained" 
+            onClick={handleSubmit} 
+            sx={{ 
+              mt: 3, 
+              bgcolor: "#1976D2", 
+              color: "white", 
+              textTransform: "none", 
+              fontSize: "16px",
+              "&:hover": { bgcolor: "#1565C0" } 
+            }}
+          >
             Submit
           </Button>
-        </Box>
-      </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 };

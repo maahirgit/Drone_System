@@ -1,133 +1,161 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Checkbox, FormControlLabel, useTheme, useMediaQuery } from '@mui/material';
-import myImage from '../../../assets/auth/image3_upscaled.jpg'; // Ensure the correct path to your image file
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Paper, Button, Typography, Box, FormControlLabel, Checkbox, Link, TextField } from '@mui/material';
+import AppleIcon from '@mui/icons-material/Apple';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import drone2 from '../../../assets/auth/drone page.jpg'; // Ensure the path is correct
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const LoginPage = () => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const [isFormVisible, setIsFormVisible] = useState(false);
 
-  useEffect(() => {
-    // Simulate a delay to show the roll-out effect
-    setTimeout(() => {
-      setIsFormVisible(true);
-    }, 500); // Adjust the delay as needed
-  }, []);
+const Login = () => {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const [rememberMe, setRememberMe] = useState(false);
+    const navigate = useNavigate();
 
-  return (
-    <Box
-      sx={{
-        position: 'relative',
-        width: '100vw',
-        height: '100vh',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      {/* Background Image */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundImage: `url(${myImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          zIndex: -1,
-          opacity: 5 // Adjust opacity as needed
-        }}
-      />
 
-      {/* Login Form */}
-      <Box
-        sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          padding: '20px',
-          borderRadius: '10px',
-          boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
-          width: { xs: '90%', md: '400px' },
-          transform: isFormVisible ? 'translateY(0)' : 'translateY(-100%)',
-          transition: 'transform 0.5s ease-in-out',
-        }}
-      >
-        <Typography
-          variant={isSmallScreen ? 'h5' : 'h4'}
-          sx={{ marginBottom: 2, fontWeight: 'bold', color: '#222' }}
+    const onSubmit = async (data) => {
+        try {
+            const response = await axios.post("/user/loginUser", data);
+    
+            if (response.status === 200) {
+                toast.success("Login successful!", {
+                    className: "toast-success",
+                    autoClose: 200,
+                    hideProgressBar: false,
+                });
+    
+                setTimeout(() => {
+                    navigate('/');
+                }, 200);
+            }
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status === 404) {
+                    toast.error("User not found. Please register first.", {
+                        className: "toast-error",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                    });
+                } else if (error.response.status === 401) {
+                    toast.error("Incorrect password. Please try again.", {
+                        className: "toast-error",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                    });
+                } else {
+                    toast.error("Login failed. Please try again later.", {
+                        className: "toast-error",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                    });
+                }
+            } else {
+                toast.error("Network error. Please check your connection.", {
+                    className: "toast-error",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                });
+            }
+            console.error("Login failed", error);
+        }
+    };
+
+    return (
+        <Box
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+                width: '100vw',
+                backgroundImage: `url(${drone2})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+            }}
         >
-          Sign In
-        </Typography>
-        <TextField
-          fullWidth
-          label="Username"
-          variant="filled"
-          InputProps={{
-            style: {
-              background: 'rgba(255, 255, 255, 0.5)',
-              color: '#333',
-              borderRadius: '8px',
-            },
-          }}
-          InputLabelProps={{
-            style: { color: '#333' },
-          }}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          fullWidth
-          label="Password"
-          type="password"
-          variant="filled"
-          InputProps={{
-            style: {
-              background: 'rgba(255, 255, 255, 0.5)',
-              color: '#333',
-              borderRadius: '8px',
-            },
-          }}
-          InputLabelProps={{
-            style: { color: '#333' },
-          }}
-          sx={{ marginBottom: 2 }}
-        />
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          sx={{
-            marginBottom: 2,
-            background: '#4CAF50',
-            color: '#fff',
-            padding: '10px 0',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            textTransform: 'none',
-            borderRadius: '8px',
-            transition: 'background 0.3s ease',
-            '&:hover': {
-              background: '#45a049',
-            },
-          }}
-        >
-          Sign In
-        </Button>
-        <FormControlLabel
-          control={<Checkbox sx={{ color: '#333' }} />}
-          label="Remember Me"
-          sx={{ marginBottom: 1, color: '#444' }}
-        />
-        <Typography
-          variant="body2"
-          sx={{ marginBottom: 1, color: '#444', textDecoration: 'underline', cursor: 'pointer' }}
-        >
-          Forgot Password?
-        </Typography>
-      </Box>
-    </Box>
-  );
+            <Paper
+                elevation={6}
+                style={{
+                    padding: 20,
+                    textAlign: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                }}
+            >
+                <Typography variant="h5" gutterBottom>
+                    LOG IN TO FLY SYNC
+                </Typography>
+                <Box display="flex" flexDirection="column" gap={2}>
+                    <Button variant="contained" startIcon={<AppleIcon />} style={{ backgroundColor: 'black', color: 'white' }}>
+                        Continue with Apple
+                    </Button>
+                    <Button variant="contained" startIcon={<GoogleIcon />} style={{ backgroundColor: '#db4437', color: 'white' }}>
+                        Continue with Google
+                    </Button>
+                    <Button variant="contained" startIcon={<FacebookIcon />} style={{ backgroundColor: '#3b5998', color: 'white' }}>
+                        Continue with Facebook
+                    </Button>
+                </Box>
+                <Typography variant="body2" style={{ margin: '20px 0' }}>
+                    or
+                </Typography>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <TextField
+                        fullWidth
+                        label="Email address"
+                        margin="normal"
+                        variant="outlined"
+                        {...register("Email", { required: "Email is required" })}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        margin="normal"
+                        variant="outlined"
+                        {...register("Password", { required: "Password is required" })}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                    />
+                    <Box display="flex" justifyContent="space-between" alignItems="center" marginTop={1}>
+                        <FormControlLabel
+                            control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
+                            label="Remember me"
+                        />
+                        <Link href="#" variant="body2">
+                            Forgot password?
+                        </Link>
+                    </Box>
+                    <Button type="submit" fullWidth variant="contained" color="primary" style={{ marginTop: 10 }}>
+                        Log In
+                    </Button>
+                </form>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    style={{ marginTop: 10, backgroundColor: '#4caf50', color: 'white' }}
+                >
+                    Log In as Vendor
+                </Button>
+            </Paper>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="colored"
+            />
+        </Box>
+    );
 };
 
-export default LoginPage;
+export default Login;

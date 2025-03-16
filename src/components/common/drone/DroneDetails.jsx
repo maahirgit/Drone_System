@@ -105,19 +105,19 @@ const ProductDetail = () => {
       >
         <Typography variant="h5">Product Details</Typography>
         <Typography variant="body1">
-          <strong>Name:</strong> Product XYZ
+          <strong>Name:</strong> DRONE DJI MAVIC 4
         </Typography>
         <Typography variant="body1">
-          <strong>Price:</strong> $199.99
+          <strong>Price:</strong> 3500
         </Typography>
         <Typography variant="body1">
-          <strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          <strong>Description:</strong> DJI DRONE FOR MULTIPURPOSE
         </Typography>
         <Typography variant="body1">
-          <strong>Start Date:</strong> January 1, 2024
+          <strong>Start Date:</strong> MARCH 1, 2025
         </Typography>
         <Typography variant="body1">
-          <strong>End Date:</strong> December 31, 2024
+          <strong>End Date:</strong> MARCH 5, 2025
         </Typography>
       </Box>
     </Box>
