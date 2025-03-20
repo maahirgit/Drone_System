@@ -14,8 +14,11 @@ import ContactUs from "../common/customer/ContactUs";
 import Wishlist from "../common/customer/Wishlist";
 import Home from "../common/drone-provider/Home";
 import Login  from "../common/auth/Login";
+import Signup from "../common/auth/SignUp"
 import VendorDashboard from "../common/drone-provider/VendorDashboard"
 import Profile from "../common/customer/Profile";
+import ForgetPassword from "../common/auth/ForgetPassword";
+import ResetPassword from "../common/auth/ResetPassword";
 
 const MainRouter = ({ children }) => {
   const routesData = createBrowserRouter([
@@ -39,7 +42,6 @@ const MainRouter = ({ children }) => {
           element: <DroneList/>, //view drone details
           errorElement: <h1>Error...</h1>
         },
-        
         {
             path:"DroneDetails",
             element: <DroneDetails/>, //view drone details
@@ -49,7 +51,7 @@ const MainRouter = ({ children }) => {
             path:"AddDrone",
             element: <AddDrone/>,
             errorElement: <h1>Error..</h1>
-        },
+        },  
         {
           path:"DroneRent",
           element:<DroneRentalHistory/>,
@@ -104,6 +106,21 @@ const MainRouter = ({ children }) => {
           path : "Profile",
           element: <Profile/>,
           errorElement : <h1>Error....</h1>
+        },
+        {
+          path : "Signup",
+          element: <Signup/>,
+          errorElement: <h1>Error....</h1>
+        },
+        {
+          path : "ForgetPassword",
+          element: <ForgetPassword/>,
+          errorElement: <h1>Error....</h1>
+        },
+        {
+          path : "ResetPassword",
+          element: <ResetPassword/>,
+          errorElement: <h1>Error....</h1>
         }
       ]
     },

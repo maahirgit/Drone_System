@@ -10,24 +10,30 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
 
-
     const onSubmit = async (data) => {
         try {
             const response = await axios.post("/user/loginUser", data);
-    
+
             if (response.status === 200) {
+                const userData = response.data; // Assuming API returns { fname, lname, email, token }
+                
+                // Store user details in localStorage
+                localStorage.setItem("token", userData.token);
+                localStorage.setItem("fname", userData.fname);
+                localStorage.setItem("lname", userData.lname);
+                localStorage.setItem("email", userData.email);
+
                 toast.success("Login successful!", {
                     className: "toast-success",
                     autoClose: 200,
                     hideProgressBar: false,
                 });
-    
+
                 setTimeout(() => {
                     navigate('/');
                 }, 200);
@@ -128,7 +134,7 @@ const Login = () => {
                             control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
                             label="Remember me"
                         />
-                        <Link href="#" variant="body2">
+                        <Link href="/ForgetPassword" variant="body2">
                             Forgot password?
                         </Link>
                     </Box>
