@@ -6,7 +6,7 @@ const Logout = () => {
         const token = sessionStorage.getItem("token");
 
         try {
-            await axios.post("http://localhost:3001/user/logoutUser", {}, {
+            await axios.post("/user/logoutUser", {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

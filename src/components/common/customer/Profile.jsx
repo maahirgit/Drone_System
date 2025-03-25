@@ -1,48 +1,43 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { TextField, Button, Container, Typography, Paper } from "@mui/material";
 
 const Profile = () => {
-    const [user, setUser] = useState({
-        fname: "",
-        lname: "",
-        email: ""
-    });
+    const [user, setUser] = useState({ fname: "", lname: "", email: "" });
+    const navigate = useNavigate();
 
     const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId"); // Retrieve userId
-    console.log(token);
-    console.log(userId);
-    
+    const userId = localStorage.getItem("userId");
+
     useEffect(() => {
         if (!token || !userId) {
             alert("User not logged in! Redirecting...");
-            window.location.href = "/login"; // Redirect if no token or userId
+            navigate("/login");
             return;
         }
 
-        // Fetch user details using userId from headers
-        fetch("http://localhost:3001/user/getUser", {
+        fetch("/user/getUser", {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
-                "userId": userId // Send userId in headers
+                "userId": userId
             }
         })
         .then((res) => res.json())
         .then((data) => {
-            if (data.message) {
+            if (!data.fname || !data.lname || !data.email) {
                 alert("Session expired. Please login again.");
                 localStorage.clear();
-                window.location.href = "/login";
+                navigate("/login");
             } else {
                 setUser(data);
-                // Update localStorage in case user data changes
                 localStorage.setItem("fname", data.fname);
                 localStorage.setItem("lname", data.lname);
                 localStorage.setItem("email", data.email);
             }
         })
         .catch((err) => console.error("Error fetching user:", err));
-    }, []);
+    }, [token, userId]);
 
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -50,38 +45,70 @@ const Profile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch("http://localhost:3001/user/updateUser", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-                "userId": userId // Send userId in headers
-            },
-            body: JSON.stringify(user)
-        });
+        try {
+            const response = await fetch("/user/updateUser", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    "userId": userId
+                },
+                body: JSON.stringify(user)
+            });
 
-        const data = await response.json();
-        if (response.ok) {
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Profile update failed!");
+            }
+
             alert("Profile updated successfully!");
-            // Update localStorage after update
             localStorage.setItem("fname", user.fname);
             localStorage.setItem("lname", user.lname);
             localStorage.setItem("email", user.email);
-        } else {
-            alert("Error: " + data.message);
+        } catch (error) {
+            alert("Error: " + error.message);
         }
     };
 
     return (
-        <div>
-            <h2>User Profile</h2>
-            <form onSubmit={handleSubmit}>
-                <input type="text" name="fname" value={user.fname} onChange={handleChange} required placeholder="First Name" />
-                <input type="text" name="lname" value={user.lname} onChange={handleChange} required placeholder="Last Name" />
-                <input type="email" name="email" value={user.email} onChange={handleChange} required placeholder="Email" />
-                <button type="submit">Update Profile</button>
-            </form>
-        </div>
+        <Container component="main" maxWidth="xs">
+            <Paper elevation={3} style={{ padding: 20, marginTop: 50, textAlign: "center" }}>
+                <Typography variant="h5">User Profile</Typography>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="First Name"
+                        name="fname"
+                        value={user.fname}
+                        onChange={handleChange}
+                        required
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="Last Name"
+                        name="lname"
+                        value={user.lname}
+                        onChange={handleChange}
+                        required
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="Email"
+                        name="email"
+                        value={user.email}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Button type="submit" fullWidth variant="contained" color="primary" style={{ marginTop: 20 }}>
+                        Update Profile
+                    </Button>
+                </form>
+            </Paper>
+        </Container>
     );
 };
 

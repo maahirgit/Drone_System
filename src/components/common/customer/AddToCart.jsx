@@ -10,7 +10,7 @@ const AddToCart = ({ userId }) => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/cart/${userId}`);
+        const response = await axios.get(`/cart/${userId}`);
         setCartItems(response.data);
       } catch (error) {
         console.error("Error fetching cart:", error);
@@ -22,7 +22,7 @@ const AddToCart = ({ userId }) => {
   // Remove item from cart
   const handleRemoveItem = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/cart/remove/${id}`);
+      await axios.delete(`/cart/remove/${id}`);
       setCartItems(cartItems.filter(item => item.id !== id));
     } catch (error) {
       console.error("Error removing item:", error);

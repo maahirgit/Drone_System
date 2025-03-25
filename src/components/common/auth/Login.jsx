@@ -21,8 +21,9 @@ const Login = () => {
 
             if (response.status === 200) {
                 const userData = response.data; // Assuming API returns { fname, lname, email, token }
-                
+                console.log("response data",response.data);
                 // Store user details in localStorage
+                localStorage.setItem("userId",userData._id)
                 localStorage.setItem("token", userData.token);
                 localStorage.setItem("fname", userData.fname);
                 localStorage.setItem("lname", userData.lname);

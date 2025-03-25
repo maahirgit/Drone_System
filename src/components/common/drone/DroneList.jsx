@@ -11,7 +11,7 @@ const DroneList = ({ userId, setCartItems }) => {
   useEffect(() => {
     const fetchDrones = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/drone/getDroneDetails");
+        const response = await axios.get("/drone/getDroneDetails");
         
         let droneData = response.data.data;
 
@@ -42,10 +42,10 @@ const DroneList = ({ userId, setCartItems }) => {
     };
 
     try {
-      await axios.post("http://localhost:3001/cart/addtocart", cartData);
+      await axios.post("/cart/addtocart", cartData);
 
       // Fetch updated cart after adding item
-      const response = await axios.get(`http://localhost:3001/cart/${userId}`);
+      const response = await axios.get(`/cart/${userId}`);
       setCartItems(response.data);
 
       toast.success("Drone added to cart successfully!", { position: "top-right" });
