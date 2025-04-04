@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography, Paper } from "@mui/material";
+import axios from "axios";
 
 const Profile = () => {
     const [user, setUser] = useState({ fname: "", lname: "", email: "" });
@@ -8,35 +9,34 @@ const Profile = () => {
 
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-
     useEffect(() => {
-        if (!token || !userId) {
-            alert("User not logged in! Redirecting...");
-            navigate("/login");
-            return;
-        }
-
-        fetch("/user/getUser", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "userId": userId
-            }
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            if (!data.fname || !data.lname || !data.email) {
-                alert("Session expired. Please login again.");
-                localStorage.clear();
+        const fetchUser = async () => {
+            if (!token || !userId) {
+                alert("User not logged in! Redirecting...");
                 navigate("/login");
-            } else {
-                setUser(data);
-                localStorage.setItem("fname", data.fname);
-                localStorage.setItem("lname", data.lname);
-                localStorage.setItem("email", data.email);
+                return;
             }
-        })
-        .catch((err) => console.error("Error fetching user:", err));
+    
+            try {
+                const response = await axios.get(`/user/getUser/${userId}`);
+    
+                const data = response.data.data;
+                console.log("profile", data);
+
+                setUser({
+                    fname: data.Fname || "",
+                    lname: data.Lname || "",
+                    email: data.Email || ""
+                });
+    
+    
+             
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+    
+        fetchUser();
     }, [token, userId]);
 
     const handleChange = (e) => {

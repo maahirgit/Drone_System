@@ -9,7 +9,7 @@ import axios from 'axios'
 
 function App() {
   const [count, setCount] = useState(0)
-  axios.defaults.baseURL="https://backend-drone-management-system.onrender.com"
+  axios.defaults.baseURL="http://localhost:3001"
   return (
     <div>
       <MainRouter></MainRouter>

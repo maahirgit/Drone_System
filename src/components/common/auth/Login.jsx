@@ -20,14 +20,15 @@ const Login = () => {
             const response = await axios.post("/user/loginUser", data);
 
             if (response.status === 200) {
-                const userData = response.data; // Assuming API returns { fname, lname, email, token }
-                console.log("response data",response.data);
+                const userData = response.data.data; // Assuming API returns { fname, lname, email, token }
+                console.log("response data",response.data.data);
+                console.log("response data",response.data.data._id);
                 // Store user details in localStorage
-                localStorage.setItem("userId",userData._id)
-                localStorage.setItem("token", userData.token);
-                localStorage.setItem("fname", userData.fname);
-                localStorage.setItem("lname", userData.lname);
-                localStorage.setItem("email", userData.email);
+                localStorage.setItem("userId",userData)
+                // localStorage.setItem("token", userData.token);
+                // localStorage.setItem("fname", userData.fname);
+                // localStorage.setItem("lname", userData.lname);
+                // localStorage.setItem("email", userData.email);
 
                 toast.success("Login successful!", {
                     className: "toast-success",
