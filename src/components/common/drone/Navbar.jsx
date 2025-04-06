@@ -145,18 +145,7 @@ const Navbar = () => {
                 </Link>
               ))}
 
-              {/* Search Bar */}
-              <Search>
-                <InputBase
-                  placeholder="Search…"
-                  style={{
-                    color: "white",
-                    padding: "5px",
-                    width: "200px",
-                  }}
-                />
-                <SearchIcon style={{ color: "white", paddingRight: "10px" }} />
-              </Search>
+             
 
               {/* Wishlist Icon */}
               <IconButton color="inherit" onClick={() => navigate("/Wishlist")} style={{ marginRight: "0.5rem" }}>

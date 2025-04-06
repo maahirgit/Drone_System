@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Paper, Button, Typography, Box, FormControlLabel, Checkbox, Link, TextField } from '@mui/material';
-import AppleIcon from '@mui/icons-material/Apple';
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import drone2 from '../../../assets/auth/drone page.jpg'; // Ensure the path is correct
+import {
+    Paper,
+    Button,
+    Typography,
+    Box,
+    FormControlLabel,
+    Checkbox,
+    Link,
+    TextField
+} from '@mui/material';
+import drone2 from '../../../assets/auth/drone page.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
@@ -15,60 +21,66 @@ const Login = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
 
+    const VENDOR_ROLE_ID = "67f2c3133a243990cb063089";
+    const CUSTOMER_ROLE_ID = "67f2c2dc3a243990cb063087";
+
     const onSubmit = async (data) => {
         try {
             const response = await axios.post("/user/loginUser", data);
 
             if (response.status === 200) {
-                const userData = response.data.data; // Assuming API returns { fname, lname, email, token }
-                console.log("response data",response.data.data);
-                console.log("response data",response.data.data._id);
-                // Store user details in localStorage
-                localStorage.setItem("userId",userData)
-                // localStorage.setItem("token", userData.token);
-                // localStorage.setItem("fname", userData.fname);
-                // localStorage.setItem("lname", userData.lname);
-                // localStorage.setItem("email", userData.email);
+                const userId = response.data.data;
 
+                // Fetch full user info with populated Role_id
+                const userRes = await axios.get(`/user/getUser/${userId}`);
+                const userData = userRes.data.data;
+                
+                localStorage.setItem("userId", userId);
+                localStorage.setItem("userInfo", JSON.stringify(userData));
+                
                 toast.success("Login successful!", {
                     className: "toast-success",
-                    autoClose: 200,
+                    autoClose: 500,
                     hideProgressBar: false,
                 });
+                
+                console.log("userData:", userData);
+                console.log("Role id ",userData.Role_id)
 
                 setTimeout(() => {
-                    navigate('/');
-                }, 200);
+                    if (userData.Role_id._id === VENDOR_ROLE_ID) {
+                        navigate("/VendorDashboard");
+                    } else if (userData.Role_id._id === CUSTOMER_ROLE_ID) {
+                        navigate("/");
+                    } else {
+                        toast.error("Invalid user role. Contact admin.");
+                    }
+                }, 500);
             }
         } catch (error) {
             if (error.response) {
                 if (error.response.status === 404) {
                     toast.error("User not found. Please register first.", {
-                        className: "toast-error",
-                        autoClose: 1000,
+                        autoClose: 1500,
                         hideProgressBar: false,
                     });
                 } else if (error.response.status === 401) {
                     toast.error("Incorrect password. Please try again.", {
-                        className: "toast-error",
-                        autoClose: 1000,
+                        autoClose: 1500,
                         hideProgressBar: false,
                     });
                 } else {
                     toast.error("Login failed. Please try again later.", {
-                        className: "toast-error",
-                        autoClose: 1000,
+                        autoClose: 1500,
                         hideProgressBar: false,
                     });
                 }
             } else {
                 toast.error("Network error. Please check your connection.", {
-                    className: "toast-error",
-                    autoClose: 3000,
+                    autoClose: 2000,
                     hideProgressBar: false,
                 });
             }
-            console.error("Login failed", error);
         }
     };
 
@@ -97,20 +109,11 @@ const Login = () => {
                 <Typography variant="h5" gutterBottom>
                     LOG IN TO FLY SYNC
                 </Typography>
-                <Box display="flex" flexDirection="column" gap={2}>
-                    <Button variant="contained" startIcon={<AppleIcon />} style={{ backgroundColor: 'black', color: 'white' }}>
-                        Continue with Apple
-                    </Button>
-                    <Button variant="contained" startIcon={<GoogleIcon />} style={{ backgroundColor: '#db4437', color: 'white' }}>
-                        Continue with Google
-                    </Button>
-                    <Button variant="contained" startIcon={<FacebookIcon />} style={{ backgroundColor: '#3b5998', color: 'white' }}>
-                        Continue with Facebook
-                    </Button>
-                </Box>
+
                 <Typography variant="body2" style={{ margin: '20px 0' }}>
                     or
                 </Typography>
+
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <TextField
                         fullWidth
@@ -118,8 +121,8 @@ const Login = () => {
                         margin="normal"
                         variant="outlined"
                         {...register("Email", { required: "Email is required" })}
-                        error={!!errors.email}
-                        helperText={errors.email?.message}
+                        error={!!errors.Email}
+                        helperText={errors.Email?.message}
                     />
                     <TextField
                         fullWidth
@@ -128,9 +131,10 @@ const Login = () => {
                         margin="normal"
                         variant="outlined"
                         {...register("Password", { required: "Password is required" })}
-                        error={!!errors.password}
-                        helperText={errors.password?.message}
+                        error={!!errors.Password}
+                        helperText={errors.Password?.message}
                     />
+
                     <Box display="flex" justifyContent="space-between" alignItems="center" marginTop={1}>
                         <FormControlLabel
                             control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
@@ -140,28 +144,29 @@ const Login = () => {
                             Forgot password?
                         </Link>
                     </Box>
-                    <Button type="submit" fullWidth variant="contained" color="primary" style={{ marginTop: 10 }}>
+
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        style={{ marginTop: 10 }}
+                    >
                         Log In
                     </Button>
                 </form>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    style={{ marginTop: 10, backgroundColor: '#4caf50', color: 'white' }}
-                >
-                    Log In as Vendor
-                </Button>
+
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={true}
+                    closeOnClick
+                    pauseOnHover
+                    draggable
+                    theme="colored"
+                />
             </Paper>
-            <ToastContainer
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={true}
-                closeOnClick
-                pauseOnHover
-                draggable
-                theme="colored"
-            />
         </Box>
     );
 };
