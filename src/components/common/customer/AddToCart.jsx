@@ -31,7 +31,7 @@ const AddToCart = () => {
         const response = await axios.get(`/cart/getcart/${userId}`);
         const dataWithDays = response.data.data.map((item) => ({
           ...item,
-          days: 1, // default number of days
+          days: 1,
         }));
         setCartItems(dataWithDays);
       } catch (error) {
@@ -67,6 +67,32 @@ const AddToCart = () => {
       0
     );
     setTotalAmount(total);
+  };
+
+  const handleCheckout = async () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("User not logged in.");
+      return;
+    }
+
+    try {
+      for (const item of cartItems) {
+        const orderData = {
+          User_id: userId,
+          Drone_id: item.Drone_id._id,
+          Price: item.Drone_id.Price_per_day,
+          Days: item.days,
+        };
+
+        await axios.post("/order/createOrder", orderData);
+      }
+
+      alert("Order placed successfully!");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to complete checkout. Please try again later.");
+    }
   };
 
   return (
@@ -134,9 +160,7 @@ const AddToCart = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => {
-                alert("Proceeding to checkout...");
-              }}
+              onClick={handleCheckout}
             >
               Proceed to Checkout
             </Button>

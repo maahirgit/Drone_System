@@ -19,6 +19,9 @@ import VendorDashboard from "../common/drone-provider/VendorDashboard"
 import Profile from "../common/customer/Profile";
 import ForgetPassword from "../common/auth/ForgetPassword";
 import ResetPassword from "../common/auth/ResetPassword";
+import AdminDashboard from "../layouts/AdminDashboard";
+
+
 
 const MainRouter = ({ children }) => {
   const routesData = createBrowserRouter([
@@ -120,6 +123,11 @@ const MainRouter = ({ children }) => {
         {
           path : "ResetPassword",
           element: <ResetPassword/>,
+          errorElement: <h1>Error....</h1>
+        },
+        {
+          path : "AdminDashboard",
+          element: <AdminDashboard/>,
           errorElement: <h1>Error....</h1>
         }
       ]

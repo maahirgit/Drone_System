@@ -23,6 +23,7 @@ const Login = () => {
 
     const VENDOR_ROLE_ID = "67f2c3133a243990cb063089";
     const CUSTOMER_ROLE_ID = "67f2c2dc3a243990cb063087";
+    const ADMIN_ROLE_ID = "67f39dc2d9cb921ebc26cbf5";
 
     const onSubmit = async (data) => {
         try {
@@ -52,6 +53,8 @@ const Login = () => {
                         navigate("/VendorDashboard");
                     } else if (userData.Role_id._id === CUSTOMER_ROLE_ID) {
                         navigate("/");
+                    }else if (userData.Role_id._id === ADMIN_ROLE_ID){
+                        navigate("/AdminDashboard")
                     } else {
                         toast.error("Invalid user role. Contact admin.");
                     }
